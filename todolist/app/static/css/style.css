@@ -1,0 +1,99 @@
+body {
+    padding-top: 60px;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode {
+    background-color: #0D1117;
+    color: #fff;
+}
+
+body.dark-mode .navbar {
+    background-color: #06296b !important;
+}
+
+body.dark-mode .text-box {
+    background-color: #161B22;
+    color: #fff;
+}
+
+#iconos .btn {
+    font-size: 25px;
+    border-radius: 50%;
+    margin-left: 20px;
+}
+
+.filtro-item {
+    display: inline;
+    margin-left: 20px;
+}
+
+#main {
+    display: flex;
+    justify-content: space-between;
+}
+
+.centrar {
+    text-align: center;
+}
+
+.margen {
+    margin: 0 10px;
+}
+
+.list-group-item {
+    background-color: #fff;
+}
+
+body.dark-mode .list-group-item {
+    background-color: #161B22;
+    color: #fff;
+    border: solid 1px #fff;
+}
+
+.completed {
+    text-decoration: line-through;
+}
+
+.circulo {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: rgb(226, 6, 6);
+    border-radius: 50%;
+    float: right;
+}
+
+.completed .circulo {
+    background-color: rgb(13, 226, 6);
+}
+
+.inline {
+    display: inline;
+}
+
+@media (max-width: 800px) {
+    #menu {
+        margin-right: 20px;
+        min-width: 0;
+    }
+
+    .btn {
+        padding: 5px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    p,
+    button,
+    b,
+    label,
+    select,
+    input,
+    span {
+        font-size: small !important;
+    }
+}
