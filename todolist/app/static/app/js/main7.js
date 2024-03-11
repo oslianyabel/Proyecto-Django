@@ -3,7 +3,7 @@ let cont = 0;
 let select = -1;
 
 btnLogout.addEventListener('click', function () {
-    window.location.href = 'login.html';
+    window.location.href = "{% url 'login' %}";
 });
 
 const btnToggleDarkMode = document.querySelector('.btn-toggle-dark-mode');
@@ -28,9 +28,7 @@ const filterSelect = document.getElementById('filterSelect');
 const sortByDueDateBtn = document.getElementById('sortByDueDateBtn');
 const sortByPriorityBtn = document.getElementById('sortByPriorityBtn');
 
-taskForm.addEventListener('submit', function (event) {
-    event.preventDefault();
-
+taskForm.addEventListener('submit', function () {
     const title = document.getElementById('titleInput').value;
     const description = document.getElementById('descriptionInput').value;
     const dueDate = document.getElementById('dueDateInput').value;
@@ -65,37 +63,20 @@ taskForm.addEventListener('submit', function (event) {
         btn_cambiante.classList.add("btn-primary");
         titulo_menu.textContent = "Agregar Tarea";
 
-    } else {
-        const taskItem = `
-        <div class="list-group-item" data-due-date="${dueDate}" data-priority="${priority}" data-id="${cont}">
-          <h5 class="mb-1 title-list inline">${title}</h5>
-          <div class="circulo"></div>
-          <p class="mb-1">${description}</p>
-          <small class="text-muted">Prioridad: <b>${priority}</b> </small>
-          <br>
-          <small class="text-muted">Vence: <b>${dueDate}</b> </small>
-          <button type="button" class="btn btn-sm btn-danger float-end delete-btn"><i class="fas fa-trash-alt"></i></button>
-          <button type="button" class="margen btn btn-sm btn-warning float-end edit-btn"><i class="fas fa-edit"></i></button>
-          <button type="button" class="btn btn-sm btn-success float-end complete-btn"><i class="fas fa-check-circle"></i>
-          </button>
-        </div>
-      `;
-
-        taskList.innerHTML += taskItem;
-        cont++;
     }
-    taskForm.reset();
 });
 
 taskList.addEventListener('click', function (event) {
     if (event.target.parentElement.classList.contains('delete-btn')) {
-        event.target.parentElement.parentElement.remove();
+        eliminar(event.target.parentElement.parentElement);
     } else if (event.target.classList.contains('delete-btn')) {
-        event.target.parentElement.remove();
+        eliminar(event.target.parentElement);
     } else if (event.target.parentElement.classList.contains('complete-btn')) {
         event.target.parentElement.parentElement.classList.toggle('completed');
+        //completed(event.target.parentElement.parentElement.getAttribute("data-id"));
     } else if (event.target.classList.contains('complete-btn')) {
         event.target.parentElement.classList.toggle('completed');
+        completed(event.target.parentElement.getAttribute("data-id"));
     } else if (event.target.parentElement.classList.contains('edit-btn') || event.target.classList.contains('edit-btn')) {
         let btn_cambiante = document.querySelector("#btn-cambiante");
         let titulo_menu = document.querySelector("#titulo-menu");
@@ -173,4 +154,30 @@ function sortByPriority() {
 
     taskList.innerHTML = '';
     taskItems.forEach(item => taskList.appendChild(item));
+}
+
+function eliminar(tarea) {
+    id = tarea.getAttribute("data-id");
+    tarea.remove();
+    fetch('delete/', {
+        method: 'DELETE/{id}',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+    })
+        .then(response => {
+            if (response.ok) {
+                //quitar tarjeta
+            }
+            throw new Error('Error al enviar los datos.');
+        })
+}
+
+function completed() {
+
+}
+
+function editar() {
+
 }
