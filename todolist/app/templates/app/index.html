@@ -7,7 +7,7 @@
     <title>To Do APP</title>
     {% load static %}
     <link href="{% static 'app/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/style2.css' %}">
     <link rel="stylesheet" href="{% static 'app/font-awesome/css/all.css' %}">
 </head>
 
@@ -22,8 +22,40 @@
         </div>
     </header>
     <main class="container mt-4" id="main">
+        {% if update %}
         <div class="col-md-3" id="menu">
-            <form id="taskForm" action={% url "insert" %} method="POST">
+            <form id="taskForm" action={% url "update" %} method="POST">
+                {% csrf_token %}
+                <input type="hidden" value={{update.id}} name="id">
+                <h3 id="titulo-menu">Editar Tarea</h3>
+                <div class="mb-3">
+                    <label for="titleInput" class="form-label">Título:</label>
+                    <input type="text" class="form-control text-box" id="titleInput" required name="titulo" value={{update.titulo}}>
+                </div>
+                <div class="mb-3">
+                    <label for="descriptionInput" class="form-label">Descripción:</label>
+                    <textarea class="form-control text-box" id="descriptionInput" required name="descripcion">
+                        {{update.titulo}}
+                    </textarea>
+                </div>
+                <div class="mb-3">
+                    <label type="datetime-local" for="dueDateInput" class="form-label">Vence:</label>
+                    <input type="date" class="form-control text-box" id="dueDateInput" required name="vence" value={{update.vence}}>
+                </div>
+                <div class="mb-3">
+                    <label for="priorityInput" class="form-label">Prioridad:</label>
+                    <select class="form-select text-box" id="priorityInput" required name="prioridad" value={{update.prioridad}}>
+                        <option value="alta">Alta</option>
+                        <option value="media">Media</option>
+                        <option value="baja">Baja</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-warning w-100">Editar</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="col-md-3" id="menu">
+            <form id="taskForm" action={% url "list" %} method="POST">
                 {% csrf_token %}
                 <h3 id="titulo-menu">Agregar Tarea</h3>
                 <div class="mb-3">
@@ -35,7 +67,7 @@
                     <textarea class="form-control text-box" id="descriptionInput" required name="descripcion"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="dueDateInput" class="form-label">Vence:</label>
+                    <label type="datetime-local" for="dueDateInput" class="form-label">Vence:</label>
                     <input type="date" class="form-control text-box" id="dueDateInput" required name="vence">
                 </div>
                 <div class="mb-3">
@@ -46,9 +78,10 @@
                         <option value="baja">Baja</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary w-100" id="btn-cambiante">Agregar</button>
+                <button type="submit" class="btn btn-primary w-100">Agregar</button>
             </form>
         </div>
+        {% endif %}
         <div id="tareas">
             <div id="filtros">
                 <div id="show" class="filtro-item">
@@ -67,34 +100,67 @@
                     <button type="button" class="btn btn-primary" id="sortByPriorityBtn">Prioridad</button>
                 </div>
             </div>
-
-            <h3 class="centrar">Lista de Tareas</h3>
+            {% if errors %}
+            <h1>{{errors}}</h1>
+            {% endif %}
+            <h3 class="centrar">Tareas Privadas</h3>
             <div id="taskList" class="list-group">
-                <!-- Aquí se insertarán las tareas -->
-                {% for i in data %}
+                <!-- Aquí se insertarán las tareas privadas -->
+                {% for i in private %}
                 <div class="list-group-item" data-due-date="{{ i.vence }}" data-priority="{{ i.prioridad }}"
                     data-id="{{ i.id }}">
                     <h5 class="mb-1 title-list inline">{{ i.titulo }}</h5>
-                    <div class="circulo"></div>
+                    {% if i.estado %}
+                        <i class="completed">☻</i>
+                    {% else %}
+                        <i class="no-completed">X</i>
+                    {% endif %}
                     <p class="mb-1">{{ i.descripcion }}</p>
                     <small class="text-muted">Prioridad: <b>{{ i.prioridad }}</b> </small>
                     <br>
                     <small class="text-muted">Vence: <b>{{ i.vence }}</b> </small>
-                    <button type="button" class="btn btn-sm btn-danger float-end delete-btn"><i
-                            class="fas fa-trash-alt"></i></button>
-                    <button type="button" class="margen btn btn-sm btn-warning float-end edit-btn"><i
-                            class="fas fa-edit"></i></button>
-                    <button type="button" class="btn btn-sm btn-success float-end complete-btn"><i
+                    <a href={% url 'delete' i.id %} class="btn btn-sm btn-danger float-end delete-btn"><i
+                            class="fas fa-trash-alt"></i></a>
+                    <a href={% url 'update-form' i.id %} class="margen btn btn-sm btn-warning float-end edit-btn"><i
+                            class="fas fa-edit"></i></a>
+                    <a href={% url 'complete' i.id %} class="btn btn-sm btn-success float-end complete-btn"><i
                             class="fas fa-check-circle"></i>
-                    </button>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            <h3 class="centrar">Tareas Públicas</h3>
+            <div id="taskList" class="list-group">
+                <!-- Aquí se insertarán las tareas públicas -->
+                {% for i in public %}
+                <div class="list-group-item" data-due-date="{{ i.vence }}" data-priority="{{ i.prioridad }}"
+                    data-id="{{ i.id }}">
+                    <h5 class="mb-1 title-list inline">{{ i.titulo }}</h5>
+                    {% if i.estado %}
+                        <i class="completed">☻</i>
+                    {% else %}
+                        <i class="no-completed">X</i>
+                    {% endif %}
+                    <p class="mb-1">{{ i.descripcion }}</p>
+                    <small class="text-muted">Prioridad: <b>{{ i.prioridad }}</b> </small>
+                    <br>
+                    <small class="text-muted">Vence: <b>{{ i.vence }}</b> </small>
+                    <a href={% url 'delete' i.id %} class="btn btn-sm btn-danger float-end delete-btn"><i
+                            class="fas fa-trash-alt"></i></a>
+                    <a href={% url 'update-form' i.id %} class="margen btn btn-sm btn-warning float-end edit-btn"><i
+                            class="fas fa-edit"></i></a>
+                    <a href={% url 'complete' i.id %} class="btn btn-sm btn-success float-end complete-btn"><i
+                            class="fas fa-check-circle"></i>
+                    </a>
                 </div>
                 {% endfor %}
             </div>
         </div>
     </main>
 
+    <script src="{% static 'app/js/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'app/js/main7.js' %}"></script>
+    <script src="{% static 'app/js/main14.js' %}"></script>
 </body>
 
 </html>

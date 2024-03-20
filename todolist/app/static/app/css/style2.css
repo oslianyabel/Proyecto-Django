@@ -51,21 +51,18 @@ body.dark-mode .list-group-item {
     border: solid 1px #fff;
 }
 
-.completed {
-    text-decoration: line-through;
-}
-
-.circulo {
-    display: inline-block;
+.no-completed {
     width: 10px;
     height: 10px;
-    background-color: rgb(226, 6, 6);
-    border-radius: 50%;
     float: right;
+    color: rgb(226, 6, 6);
 }
 
-.completed .circulo {
-    background-color: rgb(13, 226, 6);
+.completed {
+    width: 10px;
+    height: 10px;
+    float: right;
+    color: rgb(13, 226, 6) !important;
 }
 
 .inline {

@@ -2,6 +2,12 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Task, Tag
 
+OPCIONES = [
+    ("baja", "Baja"),
+    ("media", "Media"),
+    ("alta", "Alta"),
+]
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -9,11 +15,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class TaskSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
-    titulo = serializers.CharField(required = True, max_length = 30, allow_blank = False)
-    descripcion = serializers.CharField(required=True, allow_blank=True)
-    prioridad = serializers.ChoiceField(choices=["alta", "baja", "media"], required=True)
-    estado = serializers.BooleanField(required=False, default=False)
-    is_public = serializers.BooleanField(required=False, default=False)
+    titulo = serializers.CharField(max_length = 20, allow_blank = False)
+    descripcion = serializers.CharField(allow_blank=True)
+    prioridad = serializers.ChoiceField(choices=OPCIONES, required=True)
+    estado = serializers.BooleanField(default=False)
+    vence = serializers.CharField(default=None)
+    is_public = serializers.BooleanField(default=False)
 
     class Meta:
         model = Task

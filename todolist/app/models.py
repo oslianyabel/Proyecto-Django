@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Create your models here.
 class Task(models.Model):
@@ -8,7 +9,8 @@ class Task(models.Model):
     prioridad = models.CharField(max_length = 10)
     estado = models.BooleanField(default = False)
     is_public = models.BooleanField(default = False)
-    vence = models.DateTimeField(auto_now_add=True)
+    vence = models.DateTimeField(null = True)
+    created = models.DateTimeField(auto_now_add=True)
     autor = models.ForeignKey(User, on_delete = models.CASCADE)
 
     def __str__(self):
