@@ -43,6 +43,7 @@ body.dark-mode .text-box {
 
 .list-group-item {
     background-color: #fff;
+    margin: 5px;
 }
 
 body.dark-mode .list-group-item {
