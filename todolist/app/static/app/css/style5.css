@@ -1,5 +1,6 @@
 body {
     padding-top: 60px;
+    background-color: #ddd;
 }
 
 /* Estilos para modo oscuro */
@@ -42,7 +43,7 @@ body.dark-mode .text-box {
 }
 
 .list-group-item {
-    background-color: #fff;
+    background-color: #ddd;
     margin: 5px;
 }
 
@@ -78,6 +79,11 @@ body.dark-mode .list-group-item {
 
     .btn {
         padding: 5px;
+        font-size: small;
+    }
+
+    .navbar-brand {
+        display: none;
     }
 
     h1,
@@ -94,4 +100,21 @@ body.dark-mode .list-group-item {
     span {
         font-size: small !important;
     }
+}
+
+/* Estilo opcional para ajustar el espacio entre el botón y el formulario */
+.dropdown-content {
+    margin-top: 10px;
+}
+
+/* Ajusta el ancho del formulario de inicio de sesión */
+.login-form {
+    width: 300px;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1;
 }

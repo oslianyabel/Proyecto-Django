@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/login.css">
+    {% load static %}
+    <link href="{% static 'app/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app/css/login.css' %}">
 </head>
 
 <body>
@@ -21,14 +22,15 @@
                                 <h3 class="login-heading mb-4">Bienvenido!</h3>
 
                                 <!-- Sign In Form -->
-                                <form onsubmit="return false">
+                                <form method='POST' action=''>
+                                    {% csrf_token %}
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="floatingInput"
+                                        <input name="username" type="text" class="form-control" id="floatingInput"
                                             placeholder="name@example.com">
                                         <label for="floatingInput">Usuario</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="password" class="form-control" id="floatingPassword"
+                                        <input name="password" type="password" class="form-control" id="floatingPassword"
                                             placeholder="Password">
                                         <label for="floatingPassword">Contraseña</label>
                                     </div>
@@ -43,9 +45,9 @@
 
                                     <div class="d-grid">
                                         <button class="btn btn-lg btn-primary btn-login text-uppercase fw-bold mb-2"
-                                            type="submit" onclick="iniciar_sesion()">Iniciar Sesión</button>
+                                            type="submit">Iniciar Sesión</button>
                                         <div class="text-center">
-                                            <a class="small" href="registro.html">Registrarse</a>
+                                            <a class="small" href="#">Registrarse</a>
                                         </div>
                                     </div>
 
@@ -57,8 +59,10 @@
             </div>
         </div>
     </div>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/login.js"></script>
+
+    <script src="{% static 'app/js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'app/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
+    <script src="app/js/login.js"></script>
 </body>
 
 </html>

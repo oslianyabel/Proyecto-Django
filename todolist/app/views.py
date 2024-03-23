@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Task
+from .models import Tag, Task
 from django.http import HttpResponse
 from django.utils.dateformat import DateFormat
 from datetime import datetime
@@ -11,20 +11,23 @@ from .serializers import UserSerializer, TaskSerializer, TagSerializer
 from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+@login_required
 def list(request):
     if request.method == 'GET':
+        tags = Tag.objects.all()
         public = Task.objects.filter(is_public = True)
         private = Task.objects.filter(autor = request.user, is_public = False)
 
+        tag_serializer = TagSerializer(tags, many=True)
         public_serializer = TaskSerializer(public, many=True)
         private_serializer = TaskSerializer(private, many=True)
 
         context = {
             "public" : public_serializer.data,
             "private" : private_serializer.data,
-            "update" : {},
+            "tags" : tag_serializer.data,
         }
         return render(request, "app/index.html", context)
 
@@ -40,20 +43,9 @@ def list(request):
             serializer.save(autor = request.user)
             return JsonResponse(serializer.data)
         else:
-            public = Task.objects.filter(is_public = True)
-            private = Task.objects.filter(autor = request.user)
-
-            public_serializer = TaskSerializer(public, many=True)
-            private_serializer = TaskSerializer(private, many=True)
-            
-            context = {
-                "public" : public_serializer.data,
-                "private" : private_serializer.data,
-                "update" : {},
-                "errors" : serializer.errors
-            }
-            return render(request, "app/index.html", context)
+            return JsonResponse({"errors": serializer.errors})
         
+@login_required        
 def select(request, id):
     if request.method == 'GET':
         task = Task.objects.get(id = id)
@@ -73,7 +65,7 @@ def select(request, id):
     
     if request.method == 'POST':
         data = request.POST
-        print(data)
+        #print(data)
         data_ok = {}
         for clave, valor in data.items():
             data_ok[clave] = valor
@@ -85,15 +77,11 @@ def select(request, id):
             return JsonResponse(serializer.data)
         else:
             return JsonResponse({"errors": serializer.errors})
-
-def login(request):
-    context = {}
-    return render(request, "app/login.html", context)
-
+        
+        
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
 
 def register(request):
     if request.method == 'POST':
@@ -108,3 +96,15 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'app/register.html', {'form': form})
+
+def attach(request, id_task, id_tag):
+    task = Task.objects.all(id = id_task)
+    tag = Tag.objects.get(id = id_tag)
+    tag.tasks.add(task)
+    return JsonResponse({"message": "etiqueta agregada a la tarea"})
+
+def detach(request, id_task, id_tag):
+    task = Task.objects.all(id = id_task)
+    tag = Tag.objects.get(id = id_tag)
+    tag.tasks.remove(task)
+    return JsonResponse({"message": "etiqueta quitada de la tarea"})

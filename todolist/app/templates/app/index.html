@@ -4,34 +4,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Do APP</title>
+    <title>To Do List</title>
     {% load static %}
     <link href="{% static 'app/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'app/css/style4.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/style5.css' %}">
     <link rel="stylesheet" href="{% static 'app/font-awesome/css/all.css' %}">
 </head>
 
 <body>
-    <header class="navbar navbar-dark bg-primary fixed-top">
+    <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <span class="navbar-brand mb-0 h1">Gestión de Tareas</span>
-            <div id="iconos">
-                <button class="btn btn-sm btn-toggle-dark-mode btn-dark"><i class="fas fa-moon"></i></button>
-                <button class="btn btn-sm btn-danger btn-logout"><i class="fas fa-sign-out-alt"></i></button>
+          <a class="navbar-brand" href="list">To-Do-List</a>
+
+          <a class="btn btn-primary" href="tags/list">Etiquetas</a>
+      
+          <!-- Selector de etiquetas -->
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle mr-2" type="button" id="dropdownOptionsButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Filtrar por
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownOptionsButton">
+              {% for i in tags %}
+              <button class="dropdown-item" onclick="setOption('{{i.nombre}}')">{{i.nombre}}</button>
+              {% endfor %}
             </div>
+          </div>
+      
+          <!-- Botón para alternar entre modo claro y modo oscuro -->
+          <div class="dropdown mr-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownThemeButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Modo
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownThemeButton">
+              <button class="dropdown-item" onclick="setTheme('claro')">Modo claro</button>
+              <button class="dropdown-item" onclick="setTheme('oscuro')">Modo oscuro</button>
+            </div>
+          </div>
+      
+          <!-- Formulario de inicio de sesión -->
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Iniciar sesión
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+              <form class="px-4 py-3 login-form" method='POST' action={% url 'custom_login' %}>
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="username">Usuario:</label>
+                  <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese su nombre de usuario">
+                </div>
+                <div class="form-group">
+                  <label for="password">Contraseña:</label>
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese su contraseña">
+                </div>
+                <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+              </form>
+            </div>
+          </div>
+          {% if user.is_authenticated %}
+          <span class="navbar-text mr-3">Hola, {{ user.username }}</span>
+          <a href="{% url 'exit' %}" class="btn btn-outline-light">Cerrar sesión</a>
+          {% endif %}
         </div>
-    </header>
+    </nav>
+
+    {% if errors %}
+    <div class="alert alert-danger" role="alert">
+      {{errors}}
+    </div>
+    {% endif %}
+
     <main class="container mt-4" id="main">
         <div class="col-md-3" id="menu">
             <form id="taskForm">
-                <h3 id="titulo-menu" class="text-xl-center">Crear Tarea</h3>
+                <h3 id="titulo_menu" class="text-xl-center">Crear Tarea</h3>
                 <div class="mb-3">
                     <label for="titleInput" class="form-label">Título:</label>
-                    <input type="text" class="form-control text-box" id="titleInput" required name="titulo">
+                    <input placeholder="ej. Ir de compras" type="text" class="form-control text-box" id="titleInput" required name="titulo">
                 </div>
                 <div class="mb-3">
                     <label for="descriptionInput" class="form-label">Descripción:</label>
-                    <textarea class="form-control text-box" id="descriptionInput" required name="descripcion"></textarea>
+                    <textarea placeholder="ej. Comprar la comida del mes" class="form-control text-box" id="descriptionInput" required name="descripcion"></textarea>
                 </div>
                 <div class="mb-3">
                     <label type="date" for="dueDateInput" class="form-label">Vence:</label>
@@ -53,7 +106,7 @@
                     </select>
                 </div>
             </form>
-            <button onclick="enviar()" class="btn btn-primary w-100" id="btn-cambiante">Crear</button>
+            <button onclick="enviar()" class="btn btn-primary w-100" id="btn_cambiante">Crear</button>
         </div>
         <div id="tareas">
             <div id="filtros">
@@ -73,14 +126,11 @@
                     <button type="button" class="btn btn-primary" id="sortByPriorityBtn">Prioridad</button>
                 </div>
             </div>
-            {% if errors %}
-            <h1>{{errors}}</h1>
-            {% endif %}
             <h3 class="centrar">Tareas Privadas</h3>
             <div id="taskList" class="list-group">
                 <!-- Aquí se insertarán las tareas privadas -->
                 {% for i in private %}
-                <div class="list-group-item" data-due-date="{{ i.vence }}" data-priority="{{ i.prioridad }}" data-completed="{{i.estado}}"
+                <div class="list-group-item" data-titulo="{{i.titulo}}" data-descripcion="{{i.descripcion}}" data-due-date="{{ i.vence }}" data-priority="{{ i.prioridad }}" data-completed="{{i.estado}}"
                     data-id="{{ i.id }}">
                     <h5 class="mb-1 title-list inline">{{ i.titulo }}</h5>
                     {% if i.estado %}
@@ -95,7 +145,7 @@
 
                     <button onclick="completar({{i.id}})" class="btn btn-sm btn-success float-end complete-btn"><i
                             class="fas fa-check-circle"></i></button>
-                    <button type="button" class="margen btn btn-sm btn-warning float-end edit-btn"><i
+                    <button type="button" onclick="actualizar({{i.id}})" class="margen btn btn-sm btn-warning float-end edit-btn"><i
                         class="fas fa-edit"></i></button>
                     <button onclick="eliminar({{i.id}})" class="btn btn-sm btn-danger float-end delete-btn"><i
                         class="fas fa-trash-alt"></i></button>
@@ -126,7 +176,7 @@
             <div id="taskList-public" class="list-group">
                 <!-- Aquí se insertarán las tareas públicas -->
                 {% for i in public %}
-                <div class="list-group-item" data-due-date="{{ i.vence }}" data-priority="{{ i.prioridad }}" data-completed="{{i.estado}}"
+                <div class="list-group-item" data-titulo="{{i.titulo}}" data-descripcion="{{i.descripcion}}" data-due-date="{{ i.vence }}" data-priority="{{ i.prioridad }}" data-completed="{{i.estado}}"
                     data-id="{{ i.id }}">
                     <h5 class="mb-1 title-list inline">{{ i.titulo }}</h5>
                     {% if i.estado %}
@@ -140,7 +190,7 @@
                     <small class="text-muted">Vence: <b>{{ i.vence }}</b> </small>
                     <button onclick="completar({{i.id}})" class="btn btn-sm btn-success float-end complete-btn"><i
                             class="fas fa-check-circle"></i></button>
-                    <button class="margen btn btn-sm btn-warning float-end edit-btn"><i
+                    <button onclick="actualizar({{i.id}})" class="margen btn btn-sm btn-warning float-end edit-btn"><i
                             class="fas fa-edit"></i></button>
                     <button onclick="eliminar({{i.id}})" class="btn btn-sm btn-danger float-end delete-btn"><i
                             class="fas fa-trash-alt"></i></button>
@@ -152,15 +202,26 @@
 
     <script src="{% static 'app/js/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'app/bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'app/js/variables.js' %}"></script>
+    <script src="{% static 'app/js/declaraciones.js' %}"></script>
     <script src="{% static 'app/js/token.js' %}"></script>
     <script src="{% static 'app/js/ajax.js' %}"></script>
     <script src="{% static 'app/js/crud.js' %}"></script>
-    <script src="{% static 'app/js/actualizar.js' %}"></script>
+    <script src="{% static 'app/js/update.js' %}"></script>
     <script src="{% static 'app/js/filtros.js' %}"></script>
     <script src="{% static 'app/js/orden.js' %}"></script>
-    <script src="{% static 'app/js/nav_bar.js' %}"></script>
     <script src="{% static 'app/js/login.js' %}"></script>
+    <script>
+        function setTheme(theme) {
+          if (theme === 'claro') {
+            document.body.classList.remove('dark-mode');
+          } else if (theme === 'oscuro') {
+            document.body.classList.add('dark-mode');
+          }
+        }
+      
+        function setOption(option) {
+          console.log("Opción seleccionada: " + option);
+        }
+    </script>
 </body>
-
 </html>

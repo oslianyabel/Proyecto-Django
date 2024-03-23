@@ -1,7 +1,11 @@
 function crearTarea(data) {
+    titulo.value = "";
+    descripcion.value = "";
     let tarea = document.createElement('div');
     tarea.setAttribute("data-id", data.id);
-    tarea.setAttribute("data-due-date", data.fecha);
+    tarea.setAttribute("data-titulo", data.titulo);
+    tarea.setAttribute("data-descripcion", data.descripcion);
+    tarea.setAttribute("data-due-date", data.vence);
     tarea.setAttribute("data-priority", data.prioridad);
     tarea.setAttribute("data-completed", data.estado);
     tarea.classList.add("list-group-item");
@@ -32,6 +36,8 @@ function crearTarea(data) {
 }
 
 function actualizarTarea(data) {
+    titulo.value = "";
+    descripcion.value = "";
     let tarea;
     let taskItems = document.querySelectorAll('.list-group-item');
     for (let i = 0; i < taskItems.length; i++) {
@@ -40,6 +46,10 @@ function actualizarTarea(data) {
             break;
         }
     }
+    tarea.setAttribute("data-titulo", data.titulo);
+    tarea.setAttribute("data-descripcion", data.descripcion);
+    tarea.setAttribute("data-priority", data.prioridad);
+    tarea.setAttribute("data-due-date", data.vence);
     let clases = "";
     if (data.estado)
         clases = "fas fa-check-circle completed";

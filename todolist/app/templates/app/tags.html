@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Etiquetas</title>
+  <!-- Bootstrap CSS -->
+  {% load static %}
+  <link href="{% static 'app/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'app/font-awesome/css/all.css' %}">
+  <link rel="stylesheet" href="{% static 'app/css/tags2.css' %}">
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="list">Tags</a>
+
+        <a class="btn btn-primary" href="../list">Tareas</a>
+    
+        <!-- Botón para alternar entre modo claro y modo oscuro -->
+        <div class="dropdown mr-2">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownThemeButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Modo
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownThemeButton">
+            <button class="dropdown-item" onclick="setTheme('claro')">Modo claro</button>
+            <button class="dropdown-item" onclick="setTheme('oscuro')">Modo oscuro</button>
+          </div>
+        </div>
+    
+        <!-- Formulario de inicio de sesión -->
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Iniciar sesión
+          </button>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+            <form class="px-4 py-3 login-form">
+              <div class="form-group">
+                <label for="username">Usuario:</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese su nombre de usuario">
+              </div>
+              <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese su contraseña">
+              </div>
+              <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+            </form>
+          </div>
+        </div>
+      </div>
+  </nav>
+
+  <div class="container">
+    <h1 class="mt-5 mb-4">Gestión de Etiquetas</h1>
+    <div id="etiquetas">
+      {% for i in etiquetas %}
+        <div class="etiqueta mb-2" data-id="{{i.id}}" data-nombre="{{i.nombre}}">
+          {{i.nombre}}
+          <button onclick="eliminar({{i.id}})" class="btn btn-danger btn-sm ml-2 eliminar">Eliminar</button>
+          <button onclick="editar({{i.id}})" class="btn btn-secondary btn-sm editar">Editar</button>
+        </div>
+      {% endfor %}
+    </div>
+    <hr>
+    <h2>Agregar Etiqueta</h2>
+    <form id="form-etiqueta">
+      <div class="form-group">
+        <input name="nombre" type="text" class="form-control w-25" id="nombreEtiqueta" placeholder="Nombre de la etiqueta" required>
+      </div>
+    </form>
+    <button onclick="enviar()" id="btn-submit" class="btn btn-primary w-25">Crear</button>
+  </div>
+
+  {% csrf_token %}
+  <script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  </script>
+  <script src="{% static 'app/js/jquery-3.7.1.min.js' %}"></script>
+  <script src="{% static 'app/bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'app/js/token.js' %}"></script>
+  <script src="{% static 'app/js/tags.js' %}"></script>
+  <script>
+    function setTheme(theme) {
+      if (theme === 'claro') {
+        document.body.classList.remove('dark-mode');
+      } else if (theme === 'oscuro') {
+        document.body.classList.add('dark-mode');
+      }
+    }
+
+    function setOption(option) {
+      console.log("Opción seleccionada: " + option);
+    }
+  </script>
+</body>
+</html>

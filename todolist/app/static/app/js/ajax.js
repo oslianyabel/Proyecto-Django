@@ -1,6 +1,4 @@
 function enviar() {
-    btn_cambiante = document.querySelector("#btn-cambiante");
-    titulo_menu = document.querySelector("#titulo-menu");
     form = new FormData(taskForm);
     if (btn_cambiante.textContent == "Actualizar")
         send_update();
@@ -18,8 +16,8 @@ function send_update() {
     }).
         then(response => response.json()).
         then(data => {
-            if (data.errors)
-                console.log(data.errors);
+            if (data["errors"])
+                alert("Campos incorrectos: " + data["errors"]);
             else {
                 actualizarTarea(data);
 
@@ -45,7 +43,10 @@ function send_create() {
     }).
         then(response => response.json()).
         then(data => {
-            crearTarea(data);
+            if (data["errors"])
+                alert("Campos incorrectos: " + data["errors"]);
+            else
+                crearTarea(data);
         }).
         catch(error => {
             alert("Error al crear la tarea");
@@ -86,4 +87,12 @@ function eliminar(id) {
             alert("Error al eliminiar tarea");
             console.log(error);
         });
+}
+
+function setOption(tag) {
+
+}
+
+function login() {
+    
 }

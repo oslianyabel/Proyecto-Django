@@ -39,8 +39,17 @@ class TaskSerializer(serializers.Serializer):
         return instance
 
 class TagSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     nombre = serializers.CharField(max_length = 30, required = True, allow_blank = False)
 
     class Meta:
         model = Tag
         ordering = ['created']
+
+    def create(self, validated_data):
+        return Tag.objects.create(**validated_data)
+    
+    def update(self, instance, validated_data):
+        instance.nombre = validated_data["nombre"]
+        instance.save()
+        return instance
