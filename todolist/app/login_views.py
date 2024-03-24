@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
 from .models import Tag, Task
 from .serializers import TaskSerializer, TagSerializer
-from django.contrib.auth import logout
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
 
 def custom_login(request):
     if request.method == 'POST':
@@ -33,8 +35,18 @@ def custom_login(request):
                 }
                 return render(request, "app/index.html", context)
     else:
-        return redirect('custom_login')
+        return redirect('login')
     
 def exit(request):
     logout(request)
     return redirect("login")
+
+def registro(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'app/register.html', {'form': form})

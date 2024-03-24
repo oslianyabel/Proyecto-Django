@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from rest_framework import routers
 from app.views import UserViewSet
 from django.contrib.auth import views as auth_views
+from app import login_views
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -31,8 +32,9 @@ router.register(r'users', UserViewSet)
 urlpatterns = [
     path("tasks/", include("app.urls")),
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    #path('', include(router.urls)),
     path('accounts/', include('django.contrib.auth.urls')),
+    path("register", login_views.registro, name = "register"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ] + static(settings.STATIC_URL, 
            document_root=settings.STATIC_ROOT) 

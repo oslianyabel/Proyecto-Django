@@ -7,7 +7,7 @@
     <title>To Do List</title>
     {% load static %}
     <link href="{% static 'app/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'app/css/style5.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/style6.css' %}">
     <link rel="stylesheet" href="{% static 'app/font-awesome/css/all.css' %}">
 </head>
 
@@ -25,7 +25,7 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownOptionsButton">
               {% for i in tags %}
-              <button class="dropdown-item" onclick="setOption('{{i.nombre}}')">{{i.nombre}}</button>
+              <a class="dropdown-item" href={% url 'filter' i.id %} >{{i.nombre}}</a>
               {% endfor %}
             </div>
           </div>
@@ -62,7 +62,7 @@
             </div>
           </div>
           {% if user.is_authenticated %}
-          <span class="navbar-text mr-3">Hola, {{ user.username }}</span>
+          <span class="navbar-text mr-3">Hola, {{ user.username }} <i id="saludo" class="fas fa-hand-paper"></i></span>
           <a href="{% url 'exit' %}" class="btn btn-outline-light">Cerrar sesión</a>
           {% endif %}
         </div>
@@ -122,8 +122,8 @@
                 </div>
                 <div id="sort" class="filtro-item">
                     <i class="fas fa-sort-amount-up"></i>
-                    <button type="button" class="btn btn-primary" id="sortByDueDateBtn">Vence</button>
-                    <button type="button" class="btn btn-primary" id="sortByPriorityBtn">Prioridad</button>
+                    <button data-toggle="tooltip" title="ordena por fecha de vencimiento" type="button" class="btn btn-primary" id="sortByDueDateBtn">Vence</button>
+                    <button data-toggle="tooltip" title="ordena por prioridad" type="button" class="btn btn-primary" id="sortByPriorityBtn">Prioridad</button>
                 </div>
             </div>
             <h3 class="centrar">Tareas Privadas</h3>
@@ -149,7 +149,8 @@
                         class="fas fa-edit"></i></button>
                     <button onclick="eliminar({{i.id}})" class="btn btn-sm btn-danger float-end delete-btn"><i
                         class="fas fa-trash-alt"></i></button>
-                        
+                    <a href={% url 'tags_task' i.id %} class="btn btn-sm btn-info float-end ml-2"><i
+                       class="fas fa-tag"></i></a>
                 </div>
                 {% endfor %}
             </div>
@@ -168,8 +169,8 @@
                 </div>
                 <div id="sort-public" class="filtro-item">
                     <i class="fas fa-sort-amount-up"></i>
-                    <button type="button" class="btn btn-primary" id="sortByDueDateBtn-public">Vence</button>
-                    <button type="button" class="btn btn-primary" id="sortByPriorityBtn-public">Prioridad</button>
+                    <button data-toggle="tooltip" title="ordena por fecha de vencimiento" type="button" class="btn btn-primary" id="sortByDueDateBtn-public">Vence</button>
+                    <button data-toggle="tooltip" title="ordena por prioridad" type="button" class="btn btn-primary" id="sortByPriorityBtn-public">Prioridad</button>
                 </div>
             </div>
             <h3 class="centrar">Tareas Públicas</h3>
@@ -194,6 +195,8 @@
                             class="fas fa-edit"></i></button>
                     <button onclick="eliminar({{i.id}})" class="btn btn-sm btn-danger float-end delete-btn"><i
                             class="fas fa-trash-alt"></i></button>
+                    <a href={% url 'tags_task' i.id %} class="btn btn-sm btn-info float-end ml-2"><i
+                            class="fas fa-tag"></i></a>
                 </div>
                 {% endfor %}
             </div>
@@ -205,11 +208,11 @@
     <script src="{% static 'app/js/declaraciones.js' %}"></script>
     <script src="{% static 'app/js/token.js' %}"></script>
     <script src="{% static 'app/js/ajax.js' %}"></script>
-    <script src="{% static 'app/js/crud.js' %}"></script>
+    <script src="{% static 'app/js/crud3.js' %}"></script>
     <script src="{% static 'app/js/update.js' %}"></script>
     <script src="{% static 'app/js/filtros.js' %}"></script>
     <script src="{% static 'app/js/orden.js' %}"></script>
-    <script src="{% static 'app/js/login.js' %}"></script>
+    <script src="{% static 'app/js/sacudir.js' %}"></script>
     <script>
         function setTheme(theme) {
           if (theme === 'claro') {
@@ -222,6 +225,10 @@
         function setOption(option) {
           console.log("Opción seleccionada: " + option);
         }
+      $(document).ready(function(){
+          // Inicializar el plugin de tooltip de Bootstrap
+          $('[data-toggle="tooltip"]').tooltip();
+      });
     </script>
 </body>
 </html>

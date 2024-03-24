@@ -83,28 +83,48 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('index')  # Reemplaza 'home' con la URL a la que quieres redirigir después del registro
-    else:
-        form = UserCreationForm()
-    return render(request, 'app/register.html', {'form': form})
+def tags_task(request, id):
+    task = Task.objects.get(id = id)
+    tags = Tag.objects.exclude(tasks=task)
+    tags_task = task.tag_set.all()
+    
+    serializer_task = TaskSerializer(task)
+    serializer_tags = TagSerializer(tags, many=True)
+    serializer_tt = TagSerializer(tags_task, many=True)
+    context = {
+        "task": serializer_task.data,
+        "tags": serializer_tags.data,
+        "tags_task": serializer_tt.data,
+    }
+    return render(request, "app/tags_task.html", context)
+
 
 def attach(request, id_task, id_tag):
-    task = Task.objects.all(id = id_task)
+    task = Task.objects.get(id = id_task)
     tag = Tag.objects.get(id = id_tag)
-    tag.tasks.add(task)
-    return JsonResponse({"message": "etiqueta agregada a la tarea"})
+    if request.method == 'GET':
+        tag.tasks.add(task)
+        return JsonResponse({"message": "etiqueta agregada a la tarea"})
+    if request.method == 'DELETE':
+        tag.tasks.remove(task)
+        return JsonResponse({"message": "etiqueta quitada de la tarea"})
+    else:
+        return JsonResponse()
+    
+def filter(request, id):
+    tags = Tag.objects.all()
+    tag = Tag.objects.get(id = id)
+    public = Task.objects.filter(is_public = True, tag = tag)
+    private = Task.objects.filter(autor = request.user, is_public = False, tag = tag)
 
-def detach(request, id_task, id_tag):
-    task = Task.objects.all(id = id_task)
-    tag = Tag.objects.get(id = id_tag)
-    tag.tasks.remove(task)
-    return JsonResponse({"message": "etiqueta quitada de la tarea"})
+    tag_serializer = TagSerializer(tags, many=True)
+    public_serializer = TaskSerializer(public, many=True)
+    private_serializer = TaskSerializer(private, many=True)
+
+    context = {
+        "public" : public_serializer.data,
+        "private" : private_serializer.data,
+        "tags" : tag_serializer.data,
+    }
+    return render(request, "app/index.html", context)
+    

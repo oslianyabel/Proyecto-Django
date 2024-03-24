@@ -20,10 +20,45 @@
           </div>
           <div class="card-body p-4 p-sm-5">
             <h5 class="card-title text-center mb-5 fw-light fs-5">Registro</h5>
-            <form method="post">
+            <form method='POST'>
               {% csrf_token %}
-              {{ form.as_p }}
-              <button type="submit">Registrar</button>
+              {% if form.errors %}
+                <div>
+                    <strong>Hubo algunos errores:</strong>
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+              {% endif %}
+              <div class="form-floating mb-3">
+                <input type="text" name="username" class="form-control" id="floatingInputUsername" placeholder="myusername" required
+                  autofocus>
+                <label for="floatingInputUsername">Usuario</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input name="password1" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Contraseña</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input name="password2" type="password" class="form-control" id="floatingPasswordConfirm" placeholder="Confirm Password">
+                <label for="floatingPasswordConfirm">Confirmar Contraseña</label>
+              </div>
+
+              <div class="d-grid mb-2">
+                <button class="btn btn-lg btn-primary btn-login fw-bold text-uppercase"
+                  type="submit">Registrarse</button>
+              </div>
+
+              <a class="d-block text-center mt-2 small" href="login.html">Tienes una cuenta? Inicia Sesión</a>
+
+              <hr class="my-4">
+
             </form>
           </div>
         </div>
