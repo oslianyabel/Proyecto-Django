@@ -14,9 +14,9 @@
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-          <a class="navbar-brand" href="list">To-Do-List</a>
+          <a class="navbar-brand" href={% url "list" %} >To-Do-List</a>
 
-          <a class="btn btn-primary" href="tags/list">Etiquetas</a>
+          <a class="btn btn-primary" href={% url "tags-list" %} >Etiquetas</a>
       
           <!-- Selector de etiquetas -->
           <div class="dropdown">
@@ -63,7 +63,7 @@
           </div>
           {% if user.is_authenticated %}
           <span class="navbar-text mr-3">Hola, {{ user.username }} <i id="saludo" class="fas fa-hand-paper"></i></span>
-          <a href="{% url 'exit' %}" class="btn btn-outline-light">Cerrar sesión</a>
+          <a href={% url 'exit' %} class="btn btn-outline-light">Cerrar sesión</a>
           {% endif %}
         </div>
     </nav>
