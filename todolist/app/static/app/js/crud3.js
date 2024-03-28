@@ -23,7 +23,7 @@ function crearTarea(data) {
     <br>
     <small class="text-muted">Vence: <b>${data.vence}</b> </small>
     <button onclick="completar(${data.id})" class="btn btn-sm btn-success float-end complete-btn"><i class="fas fa-check-circle"></i></button>
-    <button type="button" class="margen btn btn-sm btn-warning float-end edit-btn"><i class="fas fa-edit"></i></button>
+    <button onclick="actualizar(${data.id})" type="button" class="margen btn btn-sm btn-warning float-end edit-btn"><i class="fas fa-edit"></i></button>
     <button onclick="eliminar(${data.id})" class="btn btn-sm btn-danger float-end delete-btn"><i class="fas fa-trash-alt"></i></button>
     <a href="tags/${data.id}" class="btn btn-sm btn-info float-end ml-2"><i class="fas fa-tag"></i></a>
     `;
@@ -65,7 +65,7 @@ function actualizarTarea(data) {
             <br>
             <small class="text-muted">Vence: <b>${data.vence}</b> </small>
             <button onclick="completar(${data.id})" class="btn btn-sm btn-success float-end complete-btn"><i class="fas fa-check-circle"></i></button>
-            <button type="button" class="margen btn btn-sm btn-warning float-end edit-btn"><i class="fas fa-edit"></i></button>
+            <button onclick="actualizar(${data.id})" type="button" class="margen btn btn-sm btn-warning float-end edit-btn"><i class="fas fa-edit"></i></button>
             <button onclick="eliminar(${data.id})" class="btn btn-sm btn-danger float-end delete-btn"><i class="fas fa-trash-alt"></i></button>
             <a href="tags/${data.id}" class="btn btn-sm btn-info float-end ml-2"><i class="fas fa-tag"></i></a>
             `;
