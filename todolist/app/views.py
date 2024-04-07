@@ -7,11 +7,11 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .serializers import UserSerializer, TaskSerializer, TagSerializer
 from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
+from .forms import TaskForm, TagForm
 
 @login_required
 def list(request):
@@ -19,31 +19,25 @@ def list(request):
         tags = Tag.objects.all()
         public = Task.objects.filter(is_public = True)
         private = Task.objects.filter(autor = request.user, is_public = False)
-
-        tag_serializer = TagSerializer(tags, many=True)
-        public_serializer = TaskSerializer(public, many=True)
-        private_serializer = TaskSerializer(private, many=True)
+        form = TaskForm()
 
         context = {
-            "public" : public_serializer.data,
-            "private" : private_serializer.data,
-            "tags" : tag_serializer.data,
+            "public" : public,
+            "private" : private,
+            "tags" : tags,
+            "form": form,
         }
         return render(request, "app/index.html", context)
 
     if request.method == 'POST':
-        data = request.POST
-        data_ok = {}
-        for clave, valor in data.items():
-            data_ok[clave] = valor
-
-        #print(data_ok)
-        serializer = TaskSerializer(data=data_ok)
-        if serializer.is_valid():
-            serializer.save(autor = request.user)
-            return JsonResponse(serializer.data)
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit = False)
+            instance.autor = request.user
+            instance.save()
+            return JsonResponse({"message": "Tarea Guardada"})
         else:
-            return JsonResponse({"errors": serializer.errors})
+            return JsonResponse({"errors": form.errors})
         
 @login_required        
 def select(request, id):
@@ -55,8 +49,7 @@ def select(request, id):
             task.estado = True
         
         task.save()
-        serializer = TaskSerializer(task)
-        return JsonResponse(serializer.data)
+        return JsonResponse({"message": "Estado cambiado"})
 
     if request.method == 'DELETE':
         task = Task.objects.get(pk = id)
@@ -64,37 +57,26 @@ def select(request, id):
         return JsonResponse({"message": "Tarea eliminada"})
     
     if request.method == 'POST':
-        data = request.POST
-        #print(data)
-        data_ok = {}
-        for clave, valor in data.items():
-            data_ok[clave] = valor
-        #print(data_ok)
         task = Task.objects.get(id = id)
-        serializer = TaskSerializer(task, data = data_ok)
-        if serializer.is_valid():
-            serializer.save(autor = request.user)
-            return JsonResponse(serializer.data)
+        form = TaskForm(request.POST, instance = task)
+        if form.is_valid():
+            instance = form.save(commit = False)
+            instance.autor = request.user
+            instance.save()
+            return JsonResponse({"message": "Tarea Actualizada"})
         else:
-            return JsonResponse({"errors": serializer.errors})
+            return JsonResponse({"errors": form.errors})
         
         
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
 def tags_task(request, id):
     task = Task.objects.get(id = id)
     tags = Tag.objects.exclude(tasks=task)
     tags_task = task.tag_set.all()
     
-    serializer_task = TaskSerializer(task)
-    serializer_tags = TagSerializer(tags, many=True)
-    serializer_tt = TagSerializer(tags_task, many=True)
     context = {
-        "task": serializer_task.data,
-        "tags": serializer_tags.data,
-        "tags_task": serializer_tt.data,
+        "task": task,
+        "tags": tags,
+        "tags_task": tags_task,
     }
     return render(request, "app/tags_task.html", context)
 
@@ -117,14 +99,10 @@ def filter(request, id):
     public = Task.objects.filter(is_public = True, tag = tag)
     private = Task.objects.filter(autor = request.user, is_public = False, tag = tag)
 
-    tag_serializer = TagSerializer(tags, many=True)
-    public_serializer = TaskSerializer(public, many=True)
-    private_serializer = TaskSerializer(private, many=True)
-
     context = {
-        "public" : public_serializer.data,
-        "private" : private_serializer.data,
-        "tags" : tag_serializer.data,
+        "public" : public,
+        "private" : private,
+        "tags" : tags,
     }
     return render(request, "app/index.html", context)
     

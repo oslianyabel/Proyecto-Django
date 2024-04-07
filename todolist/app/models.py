@@ -2,11 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-# Create your models here.
+OPCIONES = [
+    ("baja", "Baja"),
+    ("media", "Media"),
+    ("alta", "Alta"),
+]
+
 class Task(models.Model):
     titulo = models.CharField(max_length = 30)
     descripcion = models.TextField()
-    prioridad = models.CharField(max_length = 10)
+    prioridad = models.CharField(max_length = 10, choices=OPCIONES)
     estado = models.BooleanField(default = False)
     is_public = models.BooleanField(default = False)
     vence = models.DateField(null = True)

@@ -42,8 +42,10 @@ function enviar() {
                     alert("Error al crear etiqueta");
                     console.log(data["errors"]);
                 }
-                else
-                    crearEtiqueta(data);
+                else{
+                    console.log(data["message"]);
+                    window.location.href = "/tasks/tags/list";
+                }
             }).catch(error => {
                 alert("Error al crear etiqueta");
                 console.log(error);
@@ -63,8 +65,10 @@ function enviar() {
                     alert("Error al crear etiqueta");
                     console.log(data["errors"]);
                 }
-                else
-                    actualizarEtiqueta(data);
+                else{
+                    console.log(data["message"]);
+                    window.location.href = "/tasks/tags/list";
+                }
             }).catch(error => {
                 alert("Error al crear etiqueta");
                 console.log(error);

@@ -24,6 +24,7 @@
               Filtrar por
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownOptionsButton">
+              <a class="dropdown-item" href={% url 'list' %} > Todas </a>
               {% for i in tags %}
               <a class="dropdown-item" href={% url 'filter' i.id %} >{{i.nombre}}</a>
               {% endfor %}

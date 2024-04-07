@@ -17,14 +17,10 @@ function send_update() {
         then(response => response.json()).
         then(data => {
             if (data["errors"])
-                alert("Campos incorrectos: " + data["errors"]);
+                alert("Campos incorrectos");
             else {
-                actualizarTarea(data);
-
-                btn_cambiante.textContent = "Crear";
-                btn_cambiante.classList.remove("btn-warning");
-                btn_cambiante.classList.add("btn-primary");
-                titulo_menu.textContent = "Crear Tarea";
+                console.log(data["message"]);
+                window.location.href = "/tasks/list";
             }
         }).
         catch(error => {
@@ -44,9 +40,11 @@ function send_create() {
         then(response => response.json()).
         then(data => {
             if (data["errors"])
-                alert("Campos incorrectos: " + data["errors"]);
-            else
-                crearTarea(data);
+                alert("Campos incorrectos");
+            else{
+                console.log(data["message"]);
+                window.location.href = "/tasks/list";
+            }
         }).
         catch(error => {
             alert("Error al crear la tarea");
@@ -63,7 +61,8 @@ function completar(id) {
     }).
         then(response => response.json()).
         then(data => {
-            actualizarTarea(data);
+            console.log(data["message"]);
+            window.location.href = "/tasks/list";
         }).
         catch(error => {
             alert("Error al cambiar estado");
@@ -81,18 +80,10 @@ function eliminar(id) {
         then(response => response.json()).
         then(data => {
             console.log(data["message"]);
-            eliminarTarea(id);
+            window.location.href = "/tasks/list";
         }).
         catch(error => {
             alert("Error al eliminiar tarea");
             console.log(error);
         });
-}
-
-function setOption(tag) {
-
-}
-
-function login() {
-    
 }

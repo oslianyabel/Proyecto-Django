@@ -17,14 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework import routers
-from app.views import UserViewSet
 from django.contrib.auth import views as auth_views
 from app import login_views
-
-# Routers provide an easy way of automatically determining the URL conf.
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -35,7 +29,6 @@ urlpatterns = [
     #path('', include(router.urls)),
     path('accounts/', include('django.contrib.auth.urls')),
     path("register", login_views.registro, name = "register"),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ] + static(settings.STATIC_URL, 
            document_root=settings.STATIC_ROOT) 
 """ + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) """
