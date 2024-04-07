@@ -1,17 +1,21 @@
+body {
+    background-color: #ddd;
+}
 body.dark-mode {
     background-color: #0D1117;
     color: #fff;
 }
-
 body.dark-mode .navbar {
     background-color: #06296b !important;
 }
-
 body.dark-mode .text-box {
     background-color: #161B22;
     color: #fff;
 }
+#home:hover {
+    color: #52adf2;
+}
 
-body {
-    background-color: #ddd;
+.login-form {
+    width: 300px;
 }

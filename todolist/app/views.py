@@ -1,15 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Tag, Task
-from django.http import HttpResponse
-from django.utils.dateformat import DateFormat
-from datetime import datetime
-from django.http import JsonResponse, HttpResponseRedirect
-from django.contrib.auth.models import User
-from rest_framework import viewsets
-from rest_framework.response import Response
-from django.urls import reverse
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login, authenticate
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .forms import TaskForm, TagForm
 

@@ -4,26 +4,15 @@
     <meta charset="UTF-8">
     <title>Etiquetas por tarea</title>
     {% load static %}
-    <style>
-        body.dark-mode {
-            background-color: #0D1117;
-            color: #fff;
-        }
-        body.dark-mode .navbar {
-            background-color: #06296b !important;
-        }
-        body.dark-mode .text-box {
-            background-color: #161B22;
-            color: #fff;
-        }
-    </style>
     <link href="{% static 'app/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'app/font-awesome/css/all.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/tags_task.css' %}">
 </head>
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-          <a class="navbar-brand" href={% url 'list' %} >To-Do-List</a>
+          <a class="navbar-brand" href={% url 'list' %} ><i class="fas fa-home" id="home"></i>
+          </a>
 
           <a class="btn btn-primary" href={% url "tags-list" %} >Etiquetas</a>
       
@@ -45,7 +34,7 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
 
-              <form class="px-4 py-3 login-form" method='POST' action={% url 'custom_login' %}>
+              <form class="px-4 py-3 login-form" method='POST' action={% url 'login' %}>
                     {% csrf_token %}
                     <div class="form-group">
                     <label for="username">Usuario:</label>

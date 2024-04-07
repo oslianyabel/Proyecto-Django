@@ -45,6 +45,7 @@ body.dark-mode .text-box {
 .list-group-item {
     background-color: #ddd;
     margin: 5px;
+    max-width: 30vw;
 }
 
 body.dark-mode .list-group-item {
@@ -69,6 +70,10 @@ body.dark-mode .list-group-item {
 
 .inline {
     display: inline;
+}
+
+#home:hover {
+    color: #52adf2;
 }
 
 @media (max-width: 800px) {
@@ -99,6 +104,10 @@ body.dark-mode .list-group-item {
     input,
     span {
         font-size: small !important;
+    }
+
+    .login-form {
+        width: 150px;
     }
 }
 

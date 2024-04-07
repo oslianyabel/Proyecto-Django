@@ -7,7 +7,7 @@
   <title>Registro</title>
   {% load static %}
   <link href="{% static 'app/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'app/css/register.css' %}">
+  <link rel="stylesheet" href="{% static 'app/css/register2.css' %}">
 </head>
 
 <body>
@@ -21,7 +21,7 @@
           <div class="card-body p-4 p-sm-5">
             <h5 class="card-title text-center mb-5 fw-light fs-5">Registro</h5>
             {% if form.errors %}
-                <div>
+                <div class="alert alert-danger" role="alert">
                     <strong>Hubo algunos errores:</strong>
                     <ul>
                         {% for field in form %}
@@ -33,32 +33,30 @@
                 </div>
               {% endif %}
             <form method='POST'>
-              {% csrf_token %}
-              <div class="form-floating mb-3">
-                <input type="text" name="username" class="form-control" id="floatingInputUsername" placeholder="myusername" required
-                  autofocus>
-                <label for="floatingInputUsername">Usuario</label>
-              </div>
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                  <label for="floatingInputUsername">Usuario</label>
+                  <input type="text" name="username" class="form-control" id="floatingInputUsername" placeholder="myusername" required
+                    autofocus>
+                </div>
 
-              <div class="form-floating mb-3">
-                <input name="password1" type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                <label for="floatingPassword">Contraseña</label>
-              </div>
+                <div class="form-floating mb-3">
+                  <label for="floatingPassword">Contraseña</label>
+                  <input name="password1" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                </div>
 
-              <div class="form-floating mb-3">
-                <input name="password2" type="password" class="form-control" id="floatingPasswordConfirm" placeholder="Confirm Password">
-                <label for="floatingPasswordConfirm">Confirmar Contraseña</label>
-              </div>
+                <div class="form-floating mb-3">
+                  <label for="floatingPasswordConfirm">Confirmar Contraseña</label>
+                  <input name="password2" type="password" class="form-control" id="floatingPasswordConfirm" placeholder="Confirm Password">
+                </div>
 
-              <div class="d-grid mb-2">
-                <button class="btn btn-lg btn-primary btn-login fw-bold text-uppercase"
-                  type="submit">Registrarse</button>
-              </div>
+                <div class="d-grid mb-2">
+                  <button class="btn btn-lg btn-primary btn-login fw-bold text-uppercase"
+                    type="submit">Registrarse</button>
+                </div>
 
-              <a class="d-block text-center mt-2 small" href="login.html">Tienes una cuenta? Inicia Sesión</a>
-
-              <hr class="my-4">
-
+                <a class="d-block text-center mt-2 small" href={% url "login" %}>Tienes una cuenta? Inicia Sesión</a>
+                <hr class="my-4">
             </form>
           </div>
         </div>
