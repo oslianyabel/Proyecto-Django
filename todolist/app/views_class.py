@@ -6,20 +6,15 @@ from .forms import TaskForm, TagForm
 from rest_framework.response import Response
 from .serializers import TaskSerializer, TagSerializer
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 
-@api_view()
-@login_required
-def list(request):
-    if request.method == 'GET':
+class list(APIView):
+    def get(self, request):
         tags = Tag.objects.all()
         public = Task.objects.filter(is_public = True)
         private = Task.objects.filter(autor = request.user, is_public = False)
         form = TaskForm()
 
-        """ public_serializer = TaskSerializer(public, many=True)
-        tags_serializer = TagSerializer(tags, many=True)
-        private_serializer = TaskSerializer(private, many=True) """
-        
         context = {
             "public" : public,
             "private" : private,
@@ -27,8 +22,8 @@ def list(request):
             "form": form,
         }
         return render(request, "app/index.html", context)
-
-    if request.method == 'POST':
+    
+    def post(self, request):
         form = TaskForm(request.POST)
         if form.is_valid():
             instance = form.save(commit = False)
@@ -37,10 +32,10 @@ def list(request):
             return JsonResponse({"message": "Tarea Guardada"})
         else:
             return JsonResponse({"errors": form.errors})
-        
-@login_required        
-def select(request, id):
-    if request.method == 'GET':
+
+#@login_required 
+class select(APIView):
+    def get(self, request, id):
         task = Task.objects.get(id = id)
         if task.estado:
             task.estado = False
@@ -49,13 +44,13 @@ def select(request, id):
         
         task.save()
         return JsonResponse({"message": "Estado cambiado"})
-
-    if request.method == 'DELETE':
-        task = Task.objects.get(pk = id)
+    
+    def delete(self, request, id):
+        task = Task.objects.get(id = id)
         task.delete()
         return JsonResponse({"message": "Tarea eliminada"})
     
-    if request.method == 'POST':
+    def post(self, request, id):
         task = Task.objects.get(id = id)
         form = TaskForm(request.POST, instance = task)
         if form.is_valid():
@@ -66,42 +61,43 @@ def select(request, id):
         else:
             return JsonResponse({"errors": form.errors})
         
+class tags_task(APIView):
+    def get(self, request, id):
+        task = Task.objects.get(id = id)
+        tags = Tag.objects.exclude(tasks=task)
+        tags_task = task.tag_set.all()
         
-def tags_task(request, id):
-    task = Task.objects.get(id = id)
-    tags = Tag.objects.exclude(tasks=task)
-    tags_task = task.tag_set.all()
+        context = {
+            "task": task,
+            "tags": tags,
+            "tags_task": tags_task,
+        }
+        
+        return render(request, "app/tags_task.html", context)
     
-    context = {
-        "task": task,
-        "tags": tags,
-        "tags_task": tags_task,
-    }
-    return render(request, "app/tags_task.html", context)
-
-
-def attach(request, id_task, id_tag):
-    task = Task.objects.get(id = id_task)
-    tag = Tag.objects.get(id = id_tag)
-    if request.method == 'GET':
+class attach(APIView):
+    def get(self, request, id_task, id_tag):
+        task = Task.objects.get(id = id_task)
+        tag = Tag.objects.get(id = id_tag)
         tag.tasks.add(task)
         return JsonResponse({"message": "etiqueta agregada a la tarea"})
-    if request.method == 'DELETE':
+        
+    def delete(self, request, id_task, id_tag):
+        task = Task.objects.get(id = id_task)
+        tag = Tag.objects.get(id = id_tag)
         tag.tasks.remove(task)
         return JsonResponse({"message": "etiqueta quitada de la tarea"})
-    else:
-        return JsonResponse()
     
-def filter(request, id):
-    tags = Tag.objects.all()
-    tag = Tag.objects.get(id = id)
-    public = Task.objects.filter(is_public = True, tag = tag)
-    private = Task.objects.filter(autor = request.user, is_public = False, tag = tag)
+class filter(APIView):
+    def get(self, request, id):
+        tags = Tag.objects.all()
+        tag = Tag.objects.get(id = id)
+        public = Task.objects.filter(is_public = True, tag = tag)
+        private = Task.objects.filter(autor = request.user, is_public = False, tag = tag)
 
-    context = {
-        "public" : public,
-        "private" : private,
-        "tags" : tags,
-    }
-    return render(request, "app/index.html", context)
-    
+        context = {
+            "public" : public,
+            "private" : private,
+            "tags" : tags,
+        }
+        return render(request, "app/index.html", context)
